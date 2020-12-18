@@ -17,4 +17,17 @@ mysqlConnection.connect((err) => {
     }
 });
 
+mysqlConnection.querying = (con, q, vars = []) => {
+    return new Promise((resolve, reject) => {
+        con.query(q, vars, function(err, result) {
+            if (err) {
+                console.log(err.stack);
+
+                return reject(err);
+            }
+            resolve(result)
+        })
+    })
+}
+
 module.exports = mysqlConnection;
