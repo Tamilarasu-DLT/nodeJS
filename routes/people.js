@@ -18,9 +18,9 @@ Router.get('/', (req, res) => {
 });
 
 Router.get('/:name', (req, res) => {
-    let query = "SELECT * from people WHERE name = \""+req.params.name+"\"";
+    let query = "SELECT * from people WHERE name = ?";
     console.log(query);
-    mysqlConnection.query(query, (err, rows, fields) => {
+    mysqlConnection.query(query, [req.params.name], (err, rows, fields) => {
         if(!err){
             res.json({success: true, count: rows.length, data: rows});
         }
@@ -34,9 +34,9 @@ Router.get('/:name', (req, res) => {
 
 Router.post('/', (req, res) => {
     let bodyData = req.body;
-    let query = "INSERT INTO people (name, age, city, pincode) VALUES (\""+bodyData.name+"\", \""+bodyData.age+"\", \""+bodyData.city+"\", \""+bodyData.pincode+"\")";
+    let query = "INSERT INTO people (name, age, city, pincode) VALUES (?,?,?,?)";
     console.log(bodyData, query);
-    mysqlConnection.query(query, (err, rows, fields) => {
+    mysqlConnection.query(query, [bodyData.name, bodyData.age, bodyData.city, bodyData.pincode], (err, rows, fields) => {
         if(!err){
             res.json({success: true, msg: "Record added!"});
         }
@@ -50,9 +50,9 @@ Router.post('/', (req, res) => {
 
 Router.put('/:name', (req, res) => {
     let bodyData = req.body;
-    let query = "UPDATE people SET city = \""+bodyData.city+"\", pincode = \""+bodyData.pincode+"\", age = \""+bodyData.age+"\" WHERE name = \""+req.params.name+"\"";
+    let query = "UPDATE people SET city = ?, pincode = ?, age = ? WHERE name = ?";
     console.log(bodyData, query);
-    mysqlConnection.query(query, (err, rows, fields) => {
+    mysqlConnection.query(query, [bodyData.city, bodyData.pincode, bodyData.age, req.params.name], (err, rows, fields) => {
         if(!err){
             res.json({success: true, msg: "Record updated!"});
         }
@@ -65,7 +65,7 @@ Router.put('/:name', (req, res) => {
 
 Router.delete('/:name', (req, res) => {
     let bodyData = req.body;
-    let query = "DELETE FROM people WHERE (name = \""+req.params.name+"\")";
+    let query = `DELETE FROM people WHERE (name = "${req.params.name}")`;
     console.log(query);
     mysqlConnection.query(query, (err, rows, fields) => {
         if(!err){
